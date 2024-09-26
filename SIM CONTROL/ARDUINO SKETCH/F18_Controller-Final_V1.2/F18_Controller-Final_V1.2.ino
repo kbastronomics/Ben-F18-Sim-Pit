@@ -54,10 +54,12 @@
 
 #include <Nextion.h>          // Nextion Library
 //#include <SoftwareSerial1.h>   // Library for Software Serial Port - not used, program uses Pins 0 and 1 (RX/TX)
-#include <Keyboard.h>         // Keyboard Emulation
+//#include <Keyboard.h>         // Keyboard Emulation
 #include "NexTouch.h"
 //#include <Mouse.h>
 #include <HID.h>
+#include <HID-Project.h>                    //include HID_Project library
+#include <HID-Settings.h>
 //SoftwareSerial HMISerial(0,11); // Library for Software Serial Port - not used, program uses Pins 0 and 1 (RX/TX)
 
 // delays

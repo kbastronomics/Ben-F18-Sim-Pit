@@ -5,37 +5,92 @@
 
 #include <Stepper.h>
 #define  STEPS  720    // steps per revolution (limited to 315°)
-#define  COIL1  8
-#define  COIL2 10
-#define  COIL3  9
-#define  COIL4  11
+#define  COIL1a 38
+#define  COIL2a 40
+#define  COIL3a 39
+#define  COIL4a 41
+
+#define  COIL1b 42
+#define  COIL2b 44
+#define  COIL3b 43
+#define  COIL4b 45
 int IRSensor = 0;
 
 int HYD_BRK = 0;
 int val = 0;
 
-Stepper stepper(STEPS, COIL1, COIL2, COIL3, COIL4);
+Stepper stepperA(STEPS, COIL1a, COIL2a, COIL3a, COIL4a);
+Stepper stepperB(STEPS, COIL1b, COIL2b, COIL3b, COIL4b);
 
 
 void setup() {
- Serial.begin(9600);
- Serial.print("ONLINE");
-  pinMode (IRSensor, INPUT);
-  stepper.setSpeed(50);
-  stepper.step(820);       //Reset Position(250 steps counter-clockwise (just over the Max travel).
-  stepper.step(-820);
-
+  Serial.begin(9600);
+  Serial.print("ONLINE");
+  //pinMode (IRSensor, INPUT);
+  stepperA.setSpeed(50);
+  stepperA.step(-600);       //Reset Position(250 steps counter-clockwise (just over the Max travel).
+  stepperA.step(600);
+  stepperA.step(-20);
+    stepperB.setSpeed(50);
+  stepperB.step(-600);       //Reset Position(250 steps counter-clockwise (just over the Max travel).
+  stepperB.step(600);
+  stepperB.step(-20);
 }
-
 void loop() {
-    stepper.step(1000);
+ /*
+  * stepperA.setSpeed(50);
+  stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+   delay(100);
+    stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+  delay(100);
 
-  int statusSensor = digitalRead (IRSensor);
-  if (statusSensor == 1){
-    Serial.print("ON");
-} 
-else 
-{
-  Serial.print("OFF");
-}
+ stepperA.setSpeed(50);
+  stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+   delay(100);
+    stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+  delay(100);
+
+
+
+   stepperA.setSpeed(50);
+  stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+   delay(100);
+    stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+  delay(100);
+
+
+   stepperA.setSpeed(50);
+  stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+   delay(100);
+    stepperA.step(-2000); 
+  delay(100);
+  stepperA.step(2000);
+  delay(100);
+
+
+   stepperB.setSpeed(50);
+  stepperB.step(-2000); 
+  delay(100);
+  stepperB.step(2000);
+   delay(100);
+    stepperB.step(-2000); 
+  delay(100);
+  stepperB.step(2000);
+  delay(100);
+  */
+
 }

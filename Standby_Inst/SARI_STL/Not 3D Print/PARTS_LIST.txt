@@ -1,0 +1,77 @@
+All, these ar ethe items you will need, links are accurate July 2023
+
+you may find alternatives, or cheaper options
+
+Main Roll Stepper - NEMA8 - Hollow Shaft (Must have a hollow Shaft)
+https://www.aliexpress.com/item/4000199720558.html?spm=a2g0o.order_list.order_list_main.57.699818027OCB4p
+
+Stepper Driver
+A4988 Stepper Motor Driver Module with Heatsink 
+
+Main Pitch Servo, 270 Deg - 9g
+https://core-electronics.com.au/9g-270-metal-servo-with-analog-feedback-1-5kg.html
+
+Rear Slip RIng
+300Rpm Capsule Tiny Slip Ring Wires*2A 240V Test Equipment
+12.5mm 6 wires
+https://www.ebay.com.au/itm/314012242216
+
+M5 Flange
+https://www.ebay.com.au/itm/314047344614?var=612718391944
+
+M5 Coupling
+https://www.ebay.com.au/itm/314045856480?var=612717576402
+
+Other items
+5mm ali shaft hollow (50mm)
+M3 threaded Rod x 4 (220mm)
+Spacers KS#9804 (5mm x 0.45mm) Ali Tube
+
+M1.6mm Machine Screws various sizes 5mm, 7mm, 8mm, 10mm (some counter sunk)
+M1.6 Threaded heat inserts 3mm
+
+M2.0 Machine Screws various sizes (some counter sunk) 
+M2.0 Threaded heat inserts 4mm
+
+M3 Lock Nuts
+M3 Nuts
+M3 Threaded heat inserts 4mm
+
+M2 or M2.5 Standoffs x4 50mm
+
+Conectors
+JST 1.25 Male Female Wire Connector Pitch 1.25mm
+JST 2.54 Male Female Wire Connector Pitch 2.54mm
+See requirments from PCBs
+
+LEDS 
+2x WS2812B Though Hole (Neo Pixel)
+
+See PCB for other requirments 
+
+Open Hornet UTIL PHOTOSWITCH PCB x 1
+OPB615 UTIL PHOTOSWITCH x 1
+
+OZ Hornet LED Mounts x 1 (cut into 2 parts)
+OZ Hornet SARI PCB x 1
+OZ Honret SARI Shield x 1
+
+Arduino Mega 2560 x 1
+
+
+
+THE DESIGN IS OFFERED TO THE SIMULATOR COMMUNITY FOR PERSONAL USE
+PROTECT VIA CC BY-NC-SA 4.0 
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+PORTIONS OF THIS DESIGN REFERENCE OPEN HORNET PARTS AND DIMENSIONS
+https://github.com/jrsteensen/OpenHornet
+
+IT IS NOT FOR COMMERCIAL USE OR PROFIT
+
+
+
+
+
+
+

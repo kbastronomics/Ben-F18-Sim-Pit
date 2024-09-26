@@ -18,7 +18,7 @@ NVD / DAY / NIGHT SWITCH ADDED
 #define NUM_LEDS_CHA 52 // Open Hornet SPIN RCVRY Backlight PCB Version 2.0 by L Walker
 #define DATA_PIN_CHA 12// ARDUINO PIN that SPIN RCVRY is connected to
 //
-#define NUM_LEDS_CHB 400 // Generic Backlight loop - Left Console (400 LEDS) Change as required
+#define NUM_LEDS_CHB 500 // Generic Backlight loop - Left Console (400 LEDS) Change as required
 #define DATA_PIN_CHB 8// ARDUINO PIN that Left Console is connected to
 //
 #define NUM_LEDS_CHC 400 // Generic Backlight loop - Right Console (400 LEDS) Change as required
@@ -131,7 +131,7 @@ FastLED.addLeds<WS2812B, DATA_PIN_CHF, RGB>(leds_F, NUM_LEDS_CHF);
   // fill_solid(leds_A, NUM_LEDS_CHA, CRGB::Red); // Set all Console LEDs to ##GREEN##. 
    fill_solid(leds_B, NUM_LEDS_CHB, CRGB::Red); // Set all Console LEDs to ##GREEN##. 
    fill_solid(leds_C, NUM_LEDS_CHC, CRGB::Red); // Set all Console LEDs to ##GREEN##. 
-    FastLED.setBrightness(20); // SET CONSOLE PANELS GREEN BRIGHTNESS
+    FastLED.setBrightness(150); // SET CONSOLE PANELS GREEN BRIGHTNESS
     FastLED.show();
   DcsBios::setup();   
 }

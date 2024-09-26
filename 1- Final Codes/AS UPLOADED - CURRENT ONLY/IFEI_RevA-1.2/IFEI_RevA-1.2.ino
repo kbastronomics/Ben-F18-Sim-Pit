@@ -3,7 +3,8 @@
 // 1.0 first release
 // 1.1 Set up test added, green text re added
 // 1.2 Rudder added
-
+#include <SoftwareSerial.h>
+SoftwareSerial nextion(18, 19); // SETS SERIAL TO PINS  18/19
 
 ////////////////////---||||||||||********||||||||||---\\\\\\\\\\\\\\\\\\\\
 //||               FUNCTION = HORNET LED OUTPUT MAX 7219              ||\\
@@ -16,29 +17,11 @@
 //||            ****DO CHECK S/N BEFORE UPLOAD NEW DATA****           ||\\
 ////////////////////---||||||||||********||||||||||---\\\\\\\\\\\\\\\\\\\\
 
-#include <Servo.h>
-#define DCSBIOS_IRQ_SERIAL
+
+#define DCSBIOS_DEFAULT_SERIAL
 #include "DcsBios.h"
 #include <Arduino.h>
 #include <Nextion.h>
-SoftwareSerial nextion(18, 19); // SETS SERIAL TO PINS  18/19
-Servo  trimservo;
-bool  TrimServoFollowupTask = false;
-int TrimServoMoveTime = 1000;
-int timeTrimServoOff = 0;
-
-#include <Stepper.h>
-#define  STEPS  720    // steps per revolution (limited to 315°)
-#define  COIL1BP  33
-#define  COIL2BP  37
-#define  COIL3BP  39    
-#define  COIL4BP  35
-
-
-int HYD_BRK = 0; // BP BRAKE PREASURE
-int valBP = 0;
-
-Stepper stepperBP(STEPS, COIL1BP, COIL2BP, COIL3BP, COIL4BP);
 
 int potPin = A4; // DIRECT IEFI DIMING
 int valPin = 0;
@@ -64,33 +47,6 @@ int SPBIT;
 int OCOFFBIT;
 int ifeiCol; //IFEI Colour (Green or White)
 
-void onHydIndBrakeChange(unsigned int newValue) {
-HYD_BRK = map(newValue, 0, 65000, 0, 1000);
-}
-DcsBios::IntegerBuffer hydIndBrakeBuffer(0x7506, 0xffff, 0, onHydIndBrakeChange);
-
-
-
-
-  void onToTrimBtnChange(unsigned int newValue) {
-
-if (newValue == 1){
-  digitalWrite(LED_BUILTIN, HIGH);
-  trimservo.attach(12);
-  delay (10);
-  trimservo.write(89);
-   delay (50);
-   trimservo.write(90);
-   TrimServoFollowupTask = true;
-   timeTrimServoOff = millis() + TrimServoMoveTime;
-     
-}
-else { digitalWrite(LED_BUILTIN, LOW);
-   trimservo.detach();
-}
-}
-DcsBios::IntegerBuffer toTrimBtnBuffer(0x74b4, 0x2000, 13, onToTrimBtnChange);
- 
 
 
 //################## RPM LEFT ##################Y
@@ -484,87 +440,8 @@ void onIfeiFfTextureChange(char* newValue) {
 }
 DcsBios::StringBuffer<1> ifeiFfTextureBuffer(0x74c0, onIfeiFfTextureChange);
 
-////////######## <><> NOZ LEFT WORKING <><> ########\\\\\\\\
 
-void onExtNozzlePosLChange(unsigned int newValue) {
-  //if (NOZOFF == HIGH){
-  NOZL = map(newValue, 0, 65535, 0, 100);
-  if (ifeiCol == 0) {
-    switch (NOZL) { // NOZ LEFT POSITION IFEI
-      case 0 ... 9: nextion.print("p0.pic=0"); break;
-      case 10 ... 19: nextion.print("p0.pic=1"); break;
-      case 20 ... 29: nextion.print("p0.pic=2"); break;
-      case 30 ... 39: nextion.print("p0.pic=3"); break;
-      case 40 ... 49: nextion.print("p0.pic=4"); break;
-      case 50 ... 59: nextion.print("p0.pic=5"); break;
-      case 60 ... 69: nextion.print("p0.pic=6"); break;
-      case 70 ... 79: nextion.print("p0.pic=7"); break;
-      case 80 ... 89: nextion.print("p0.pic=8"); break;
-      case 90 ... 95: nextion.print("p0.pic=9"); break;
-      case 96 ... 100: nextion.print("p0.pic=10"); break;
-    }
-    nextion.write("\xFF\xFF\xFF");
-  }
-  else if (ifeiCol != 0) {
-    switch (NOZL) { // NOZ RIGHT POSITION IFEI
-      case 0 ... 9: nextion.print("p0.pic=26"); break;
-      case 10 ... 19: nextion.print("p0.pic=27"); break;
-      case 20 ... 29: nextion.print("p0.pic=28"); break;
-      case 30 ... 39: nextion.print("p0.pic=29"); break;
-      case 40 ... 49: nextion.print("p0.pic=30"); break;
-      case 50 ... 59: nextion.print("p0.pic=31"); break;
-      case 60 ... 69: nextion.print("p0.pic=32"); break;
-      case 70 ... 79: nextion.print("p0.pic=33"); break;
-      case 80 ... 89: nextion.print("p0.pic=34"); break;
-      case 90 ... 95: nextion.print("p0.pic=35"); break;
-      case 96 ... 100: nextion.print("p0.pic=36"); break;
-    }
-    nextion.write("\xFF\xFF\xFF");
-  }
-}
-DcsBios::IntegerBuffer extNozzlePosLBuffer(0x757a, 0xffff, 0, onExtNozzlePosLChange);
-//DcsBios::IntegerBuffer extNozzlePosLBuffer(0x7568, 0xffff, 0, onExtNozzlePosLChange);
 
-////////######## <><> NOZ RIGHT WORKING <><> ########\\\\\\\\
-
-void onExtNozzlePosRChange(unsigned int newValue) {
-  NOZR = map(newValue, 0, 65535, 0, 100);
-  if (ifeiCol == 0) {
-    switch (NOZR) { // NOZ RIGHT POSITION IFEI
-      case 0 ... 9: nextion.print("p1.pic=11"); break;
-      case 10 ... 19: nextion.print("p1.pic=12"); break;
-      case 20 ... 29: nextion.print("p1.pic=13"); break;
-      case 30 ... 39: nextion.print("p1.pic=14"); break;
-      case 40 ... 49: nextion.print("p1.pic=15"); break;
-      case 50 ... 59: nextion.print("p1.pic=16"); break;
-      case 60 ... 69: nextion.print("p1.pic=17"); break;
-      case 70 ... 79: nextion.print("p1.pic=18"); break;
-      case 80 ... 89: nextion.print("p1.pic=19"); break;
-      case 90 ... 95: nextion.print("p1.pic=20"); break;
-      case 96 ... 100: nextion.print("p1.pic=21"); break;
-    }
-    nextion.write("\xFF\xFF\xFF");
-  }
-  else if (ifeiCol != 0) {
-    switch (NOZR) { // NOZ RIGHT POSITION IFEI
-      case 0 ... 9: nextion.print("p1.pic=37"); break;
-      case 10 ... 19: nextion.print("p1.pic=38"); break;
-      case 20 ... 29: nextion.print("p1.pic=39"); break;
-      case 30 ... 39: nextion.print("p1.pic=40"); break;
-      case 40 ... 49: nextion.print("p1.pic=41"); break;
-      case 50 ... 59: nextion.print("p1.pic=42"); break;
-      case 60 ... 69: nextion.print("p1.pic=43"); break;
-      case 70 ... 79: nextion.print("p1.pic=44"); break;
-      case 80 ... 89: nextion.print("p1.pic=45"); break;
-      case 90 ... 95: nextion.print("p1.pic=46"); break;
-      case 96 ... 100: nextion.print("p1.pic=47"); break;
-    }
-    nextion.write("\xFF\xFF\xFF");
-  }
-}
-
-DcsBios::IntegerBuffer extNozzlePosRBuffer(0x7578, 0xffff, 0, onExtNozzlePosRChange);
-//DcsBios::IntegerBuffer extNozzlePosRBuffer(0x7566, 0xffff, 0, onExtNozzlePosRChange);
 
 ///////////// OIL Texture ///////////////////////
 void onIfeiOilTextureChange(char* newValue) {
@@ -644,94 +521,6 @@ DcsBios::StringBuffer<1> ifeiZTextureBuffer(0x74dc, onIfeiZTextureChange);
 
 
 
-void onIfeiRpointerTextureChange(char* newValue) {
-  if (strcmp(newValue, "1") == 0) {
-    NOZOFF = HIGH;
-    nextion.print("p0.pic=0");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("p1.pic=11");
-    nextion.write("\xFF\xFF\xFF");
-  }
-  else {
-    NOZOFF = LOW;
-    nextion.print("p0.pic=22");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("p1.pic=22");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t0.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t1.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t2.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t3.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t4.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t5.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t6.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t7.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t7.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t10.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t11.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t30.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-    nextion.print("t31.txt=\"");
-    nextion.print("");
-    nextion.print("\"");
-    nextion.write("\xFF\xFF\xFF");
-
-  }
-
-}
-DcsBios::StringBuffer<1> ifeiRpointerTextureBuffer(0x74da, onIfeiRpointerTextureChange);
-
-///////////// IFEI COLOUR TEXT GREN OR WHITE ///////////////////////
-
 void onCockkpitLightModeSwChange(unsigned int newValue) {
  
   ifeiCol = newValue;
@@ -803,74 +592,7 @@ void onCockkpitLightModeSwChange(unsigned int newValue) {
     nextion.print("t32.pco=2016");
     nextion.write("\xFF\xFF\xFF");
   }
-  if (ifeiCol == 0) {
-    nextion.print("t0.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t1.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t2.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t3.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t4.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t5.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t6.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t7.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t8.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t9.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t10.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t11.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t12.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t13.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t14.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t15.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t16.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t17.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t18.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t19.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t20.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t21.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t22.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t23.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t24.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t25.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t26.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t27.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t28.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t29.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t30.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t31.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-    nextion.print("t32.pco=65535");
-    nextion.write("\xFF\xFF\xFF");
-  }
+
 }
  
 DcsBios::IntegerBuffer cockkpitLightModeSwBuffer(0x74c8, 0x0600, 9, onCockkpitLightModeSwChange);
@@ -884,18 +606,6 @@ void setup() {
   //nextion.begin(115200);
   nextion.begin(256000);
  
-    // ################ RUDDER TRIM SERVO WORKING ################
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, LOW);
-    trimservo.attach(18);
-    delay (10);
-    trimservo.detach();
-    
-    // ################ HYD BRK WORKING ################
-stepperBP.setSpeed(20);
-
-stepperBP.step(250);       //Reset Position(250 steps counter-clockwise (just over the Max travel). 
-stepperBP.step(-17);       //Reset Position(177 steps to the 0 Point clockwise). 
 
   //################## IFEI TEST SETUP ##################Y
   // COUNT DOWN -TEST- - 05 - 04 - 03 - 02 - 01 - GO
@@ -912,89 +622,31 @@ stepperBP.step(-17);       //Reset Position(177 steps to the 0 Point clockwise).
   nextion.print("\"");
   nextion.write("\xFF\xFF\xFF");
 
-  nextion.print("t1.txt=\"");
-  nextion.print("ST");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  delay (1000);
-  nextion.print("t0.txt=\"");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  nextion.print("t1.txt=\"");
-  nextion.print("05");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  delay (1000);
-  nextion.print("t1.txt=\"");
-  nextion.print("04");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  delay (1000);
-  nextion.print("t1.txt=\"");
-  nextion.print("03");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  delay (1000);
-  nextion.print("t1.txt=\"");
-  nextion.print("02");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  delay (1000);
-  nextion.print("t1.txt=\"");
-  nextion.print("01");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  delay (1000);
-  nextion.print("t0.txt=\"");
-  nextion.print("GO");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-
-  nextion.print("t1.txt=\"");
-  nextion.print("GO");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  delay (1000);
-  nextion.print("t0.txt=\"");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
-  nextion.print("t1.txt=\"");
-  nextion.print("\"");
-  nextion.write("\xFF\xFF\xFF");
   DcsBios::setup();
 }
 int posBP=0;  
 void loop() {
-//  if ((TrimServoFollowupTask == true) && (millis() >= timeTrimServoOff)){
-//}
-//    TrimServoFollowupTask = false;
- //   trimservo.detach();
- //   digitalWrite(LED_BUILTIN, LOW);
- 
-  ////////########      END       #######/////////
 
-  valBP = HYD_BRK;
-  valBP = map(HYD_BRK,0,1000,0,150);    // map Steper Needle 0-4. 0=0 - 4=150
-  if(abs(valBP - posBP)> 2){         //if diference is greater than 2 steps.
-      if((valBP - posBP)> 0){
-          stepperBP.step(-1);      // move one step to the left.
-          posBP++;
-          }
-      if((valBP - posBP)< 0){
-          stepperBP.step(1);       // move one step to the right.
-          posBP--;
-          }
-      }
 
   DcsBios::loop();
   ////////########  SCREEN DIM    #######/////////
   delay (0);
   {
     int brightness = analogRead(A4);
-    int bright = map(brightness, 10, 1100, 2, 100);
+    int bright = map(brightness, 10, 1100, 100, 100);
     String dim = "dim=" + String(bright);
-    brightness = bright;
+    brightness = 100;
     nextion.print(dim.c_str());
     nextion.write("\xFF\xFF\xFF");
   }
+
+    nextion.print("t0.txt=\"");
+  nextion.print("TE");
+  nextion.print("\"");
+  nextion.write("\xFF\xFF\xFF");
+
+  nextion.print("t1.txt=\"");
+  nextion.print("ST");
+  nextion.print("\"");
+  nextion.write("\xFF\xFF\xFF");
 }

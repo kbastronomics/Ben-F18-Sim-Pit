@@ -1,15 +1,15 @@
 
 // F18 IFEI Arduino to Nextion Ver.12G - Ben Melrose (FP Flight Panels)
 //com6
-
-#define DCSBIOS_IRQ_SERIAL
+#include <SoftwareSerial.h>
+#define DCSBIOS_DEFAULT_SERIAL
 #include "DcsBios.h"
 #include <Arduino.h>
 #include <Nextion.h>
 SoftwareSerial nextion(18,19); // SETS SERIAL TO PINS  14/15 RX/TX1
 
 int potPin = A0;
-int valPin = 0;
+int valPin = 100;
 int brightness;
 //int SPD;
 int RPML; // RPM LEFT
@@ -830,9 +830,9 @@ void loop() {
   delay (0);
   {
     int brightness = analogRead(A4);
-    int bright = map(brightness, 10, 1100, 2, 100);
+    int bright = map(brightness, 10, 1100, 100, 100);
     String dim = "dim=" + String(bright);
-    brightness = bright;
+    brightness = 100;
     nextion.print(dim.c_str());
     nextion.write("\xFF\xFF\xFF");
   }
